@@ -1,0 +1,11 @@
+RiftReign 1.0.0 — First Google Play test release
+
+• Fast twin-stick space survival combat
+• Endless waves and boss encounters
+• Casual, Standard and Overdrive difficulty
+• Run upgrades and power-ups
+• Aircraft, weapon and enemy-theme Hangar
+• Earnable Rift Crystals
+• Career statistics and local achievements
+• Offline play with no account required
+• Settings, tutorial, pause/retry and support/feedback tools

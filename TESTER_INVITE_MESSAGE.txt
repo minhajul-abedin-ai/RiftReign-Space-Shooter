@@ -1,0 +1,10 @@
+Hi! I’m preparing my Android game RiftReign: Space Shooter for Google Play and need closed-test feedback.
+
+Could you please join the test using my Google Play opt-in link, install the game, keep yourself opted in for at least 14 days, and play it several times during that period?
+
+Please test the controls, boss waves, Hangar, settings, pause/retry, and different difficulty modes. You can send feedback from About + Contact > Support / Feedback inside the game.
+
+Important: please do not opt out during the 14-day test period, because Google requires testers to remain continuously opted in.
+
+Thank you!
+— Minhajul Abedin

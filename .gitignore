@@ -1,0 +1,19 @@
+.gradle/
+.idea/
+local.properties
+/build/
+*/build/
+*.iml
+.DS_Store
+
+# Release signing secrets
+keystore.properties
+*.jks
+*.keystore
+
+# Local Android SDK / IDE
+local.properties
+.idea/
+.gradle/
+build/
+app/build/
