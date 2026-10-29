@@ -6,6 +6,16 @@ RiftReign is a fast-paced offline-first arcade space survival shooter for Androi
 
 ---
 
+## 👀 First-time visitor guide
+
+**Explore gameplay:** jump to the [screenshots](#-screenshots) and the [controls](#-controls) before trying the project.
+
+**Run it yourself:** see [Build Instructions](#-build-instructions) for the Android project. **Report a problem:** open a [GitHub issue](https://github.com/minhajul-abedin-ai/RiftReign-Space-Shooter/issues) with your device model, Android version, reproduction steps and screenshots where possible.
+
+This repository documents an offline-first Android game; it does not imply a live browser demo or a published store listing. For the author's AI engineering work, visit the [GitHub portfolio](https://github.com/minhajul-abedin-ai).
+
+---
+
 ## 🎮 About the Game
 
 **RiftReign: Space Shooter** is an independent Android game developed by **Minhajul Abedin**.
