@@ -318,7 +318,7 @@ These features are **not enabled in the current launch release**.
 You should have:
 
 - Android Studio
-- JDK 17
+- JDK 21 to execute the committed Gradle wrapper (the compiled game still targets JVM 17)
 - Android SDK 36
 - Git
 - Gradle wrapper included with the project
@@ -342,6 +342,8 @@ Allow Android Studio to complete Gradle synchronization.
 For development/testing use:
 
     launchDebug
+
+GitHub Actions now compiles this variant and publishes an unsigned debug APK for inspection. See [Android launch build](.github/workflows/android-build.yml). An APK build is not the same as device testing or a signed release.
 
 ### Release Variant
 
