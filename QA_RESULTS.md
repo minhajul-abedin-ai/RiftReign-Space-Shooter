@@ -1,8 +1,8 @@
-# RiftReign v11 — QA / Release Engineering Notes
+# RiftReign — QA / Release Engineering Notes
 
 ## Completed here
 - Final package ID verified: `com.minhajul.riftreign`.
-- First launch version: `1.0.0` / versionCode `11`.
+- First launch version: `1.0.0` / versionCode `12`.
 - Target/compile SDK set to API 36.
 - Split service architecture reviewed:
   - `launch` flavor contains no Google Ads, UMP, Billing or Play Games dependency;
@@ -16,8 +16,15 @@
 - No Google SDK imports were found in `app/src/main` or `app/src/launch` Kotlin source.
 - Gradle script delimiter sanity check passed.
 
+## Automated Android build evidence (10 November 2026)
+- GitHub Actions [launchDebug run #42737094520](https://github.com/minhajul-abedin-ai/RiftReign-Space-Shooter/actions/runs/42737094520): **passed** on Linux with SDK 36 and JDK 21.
+- Uploaded an **unsigned debug APK**, artifact `riftreign-launch-debug-apk` (artifact ID 13728180630, 962,210 bytes).
+- Artifact ZIP digest reported by GitHub: `sha256:a5e5e4f8e5969a37d843b9d674730458566d6f68b70f80cc54756c4c50d2affd`.
+- Initial CI attempts exposed incompatible SDK setup and JDK 17; the workflow was corrected to use the runner SDK and JDK 21.
+- This verifies compilation only. It does not verify Android device/emulator functionality, signing, Play Store acceptance, store release compliance or online services.
+
 ## Must still be tested on the developer PC / Google Play
-This environment does not contain a complete Android SDK/Gradle dependency cache, so the final Android variant cannot be compiled or signed here.
+The Android launchDebug variant compiles in CI, but no signed release bundle or device test has been verified in this audit.
 
 Before upload:
 - Gradle sync in Android Studio.
