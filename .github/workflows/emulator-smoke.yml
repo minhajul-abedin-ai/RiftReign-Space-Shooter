@@ -33,6 +33,8 @@ jobs:
             echo "Unexpected network or billing permission in offline launch APK" >&2
             exit 1
           fi
+      - name: Syntax-check emulator script
+        run: bash -n .github/scripts/emulator-smoke.sh
       - name: Boot emulator and launch game without live services
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -42,22 +44,7 @@ jobs:
           profile: pixel_6
           emulator-boot-timeout: 600
           disable-animations: true
-          script: |
-            set -e
-            APK=$(find app/build/outputs/apk/launch/debug -name '*.apk' -print -quit)
-            adb install -r "$APK"
-            adb logcat -c
-            adb shell am start -W -n com.minhajul.riftreign/.MainActivity
-            sleep 15
-            adb shell dumpsys activity activities > activity_state.txt
-            grep -q 'com.minhajul.riftreign' activity_state.txt
-            adb logcat -d -s AndroidRuntime:E > runtime-errors.txt
-            if grep -q "FATAL EXCEPTION" runtime-errors.txt; then
-              cat runtime-errors.txt
-              exit 1
-            fi
-            adb shell screencap -p /sdcard/riftreign-boot.png
-            adb pull /sdcard/riftreign-boot.png riftreign-boot.png
+          script: bash .github/scripts/emulator-smoke.sh
       - name: Upload emulator evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -67,5 +54,6 @@ jobs:
             permissions.txt
             runtime-errors.txt
             activity_state.txt
+            launch-result.txt
             riftreign-boot.png
           if-no-files-found: warn
