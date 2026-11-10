@@ -212,39 +212,9 @@ The player can then retry or return to the main menu.
 
 ## 📱 Screenshots
 
-Real gameplay screenshots can be stored inside:
+Gameplay screenshots have not yet been committed to this repository. To avoid broken image links, screenshots will be embedded here only once real screenshots from a tested Android build are available.
 
-    docs/screenshots/
-
-Recommended filenames:
-
-    main-menu.jpg
-    gameplay.jpg
-    boss-battle.jpg
-    core-evolution.jpg
-    hangar.jpg
-
-Once those files exist, the following images can be enabled in this README.
-
-### Main Menu
-
-![RiftReign Main Menu](docs/screenshots/main-menu.jpg)
-
-### Gameplay
-
-![RiftReign Gameplay](docs/screenshots/gameplay.jpg)
-
-### Boss Battle
-
-![RiftReign Boss Battle](docs/screenshots/boss-battle.jpg)
-
-### Core Evolution
-
-![RiftReign Core Evolution](docs/screenshots/core-evolution.jpg)
-
-### Hangar
-
-![RiftReign Hangar](docs/screenshots/hangar.jpg)
+For now, inspect the Kotlin/Android sources and the build instructions below. The `STORE_ASSETS/` folder contains store artwork, not gameplay screenshots.
 
 ---
 
@@ -271,10 +241,10 @@ RiftReign is currently developed as a native Android project.
 
 ## 📦 Current Version
 
-Current Android release build:
+Current configured Android build (from `app/build.gradle.kts`; device/install verification outstanding):
 
-    Version Name: 1.0.1
-    Version Code: 13
+    Version Name: 1.0.0
+    Version Code: 12
 
 Package:
 
