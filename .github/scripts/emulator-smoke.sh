@@ -8,7 +8,31 @@ if [[ -z "$APK" ]]; then
   exit 1
 fi
 
-adb install -r "$APK"
+# Boot-complete can precede package-manager readiness on slow hosted emulators.
+# Bound the wait and preserve diagnostics for failures rather than assuming readiness.
+package_ready=0
+for attempt in {1..12}; do
+  if adb shell pm path android 2>/dev/null | grep -q '^package:'; then
+    package_ready=1
+    break
+  fi
+  echo "Waiting for Android package manager (attempt ${attempt}/12)" >&2
+  sleep 5
+done
+if (( package_ready == 0 )); then
+  echo "Android package manager unavailable after bounded readiness checks" >&2
+  adb shell getprop sys.boot_completed >&2 || true
+  adb shell service list >&2 || true
+  exit 1
+fi
+
+# One controlled retry accommodates transient package-service disconnects.
+if ! adb install -r "$APK"; then
+  echo "First APK install failed; checking package service before one retry" >&2
+  adb shell service list >&2 || true
+  sleep 5
+  adb install -r "$APK"
+fi
 adb logcat -c
 adb shell am start -W -n com.minhajul.riftreign/.MainActivity | tee launch-result.txt
 if ! grep -q '^Status: ok' launch-result.txt; then
