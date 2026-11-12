@@ -19,7 +19,7 @@ sleep 15
 adb shell dumpsys activity activities > activity_state.txt
 # A package can appear in the activity history even when its screen is not foreground.
 # Require MainActivity to be the top-resumed activity, not merely mentioned.
-if ! grep -Eq 'topResumedActivity=.*com\\.minhajul\\.riftreign/\\.MainActivity' activity_state.txt; then
+if ! grep -Eq 'topResumedActivity=.*com\.minhajul\.riftreign/\.MainActivity' activity_state.txt; then
   echo "Game MainActivity is not top-resumed in Android activity dump" >&2
   exit 1
 fi
