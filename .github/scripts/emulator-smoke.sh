@@ -22,5 +22,6 @@ if grep -q 'FATAL EXCEPTION' runtime-errors.txt; then
   cat runtime-errors.txt >&2
   exit 1
 fi
-adb shell screencap -p /sdcard/riftreign-boot.png
-adb pull /sdcard/riftreign-boot.png riftreign-boot.png
+# Stream PNG directly to the runner: scoped storage can deny /sdcard writes.
+adb exec-out screencap -p > riftreign-boot.png
+test -s riftreign-boot.png
