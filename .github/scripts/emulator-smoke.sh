@@ -23,6 +23,23 @@ if ! grep -Eq 'topResumedActivity=.*com\.minhajul\.riftreign/\.MainActivity' act
   echo "Game MainActivity is not top-resumed in Android activity dump" >&2
   exit 1
 fi
+# The PLAY hitbox is defined in RiftReignGameView.menuPlayRect() as
+# x=60%-84%, y=20.5%-28.5% of the full-screen view.
+# Use the center and confirm startGame() emitted its explicit state-transition marker.
+size="$(adb shell wm size | tr -d '\r' | sed -n 's/^Physical size: //p' | head -n1)"
+if [[ ! "$size" =~ ^([0-9]+)x([0-9]+)$ ]]; then
+  echo "Cannot determine emulator display dimensions: $size" >&2
+  exit 1
+fi
+screen_width="${BASH_REMATCH[1]}"
+screen_height="${BASH_REMATCH[2]}"
+adb shell input tap "$((screen_width * 72 / 100))" "$((screen_height * 245 / 1000))"
+sleep 3
+adb logcat -d -s RiftReignSmoke:I > gameplay-transition.txt
+if ! grep -q 'GAMEPLAY_STARTED' gameplay-transition.txt; then
+  echo "PLAY tap did not trigger startGame() state transition" >&2
+  exit 1
+fi
 adb logcat -d -s AndroidRuntime:E > runtime-errors.txt
 if grep -q 'FATAL EXCEPTION' runtime-errors.txt; then
   cat runtime-errors.txt >&2
