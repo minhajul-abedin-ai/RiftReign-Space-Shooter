@@ -57,14 +57,21 @@ if [[ ! "$size" =~ ^([0-9]+)x([0-9]+)$ ]]; then
 fi
 screen_width="${BASH_REMATCH[1]}"
 screen_height="${BASH_REMATCH[2]}"
+# Capture the rendered menu before interaction so failed taps can be diagnosed.
+# These files are included in the existing CI evidence artifact.
+adb exec-out screencap -p > riftreign-boot.png
+adb shell dumpsys window > window_state.txt || true
+printf 'Display size: %s\nTap coordinates: %s,%s\n' "$size" "$((screen_width * 72 / 100))" "$((screen_height * 245 / 1000))" > tap-diagnostics.txt
 adb shell input tap "$((screen_width * 72 / 100))" "$((screen_height * 245 / 1000))"
 sleep 3
 adb logcat -d -s RiftReignSmoke:I > gameplay-transition.txt
+adb logcat -d -s AndroidRuntime:E > runtime-errors.txt
 if ! grep -q 'GAMEPLAY_STARTED' gameplay-transition.txt; then
   echo "PLAY tap did not trigger startGame() state transition" >&2
+  adb shell dumpsys activity activities >> activity_state.txt || true
+  adb logcat -d -t 300 >> tap-diagnostics.txt || true
   exit 1
 fi
-adb logcat -d -s AndroidRuntime:E > runtime-errors.txt
 if grep -q 'FATAL EXCEPTION' runtime-errors.txt; then
   cat runtime-errors.txt >&2
   exit 1
