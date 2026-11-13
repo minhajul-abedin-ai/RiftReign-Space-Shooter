@@ -8,8 +8,9 @@ fun main() {
         val w = GameWorld(Random(it + 1))
         w.resize(1920f, 1080f)
         w.startNewGame(Difficulty.entries[it % Difficulty.entries.size])
-        repeat(6000) {
-            if (w.state == GameState.GAME_OVER) return@repeat
+        // Stop the current run when the game ends; return@repeat only skips one tick.
+        for (tick in 0 until 6000) {
+            if (w.state == GameState.GAME_OVER) break
             w.moveX = rng.nextFloat() * 2f - 1f
             w.moveY = rng.nextFloat() * 2f - 1f
             w.aimX = rng.nextFloat() * 2f - 1f
