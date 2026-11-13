@@ -33,6 +33,16 @@ if ! adb install -r "$APK"; then
   sleep 5
   adb install -r "$APK"
 fi
+# Fresh emulator images show a first-use immersive-mode confirmation above
+# full-screen games. Mark it acknowledged in this disposable CI emulator before
+# launching the app, rather than attempting unreliable taps/key events later.
+# Read back the value to surface unsupported or denied settings writes.
+adb shell settings put secure immersive_mode_confirmations confirmed
+immersive_confirmation_setting="$(adb shell settings get secure immersive_mode_confirmations | tr -d '\\r')"
+if [[ "$immersive_confirmation_setting" != "confirmed" ]]; then
+  echo "Could not acknowledge immersive-mode confirmation: $immersive_confirmation_setting" >&2
+  exit 1
+fi
 adb logcat -c
 # Hosted emulators sometimes report a launch timeout even after APK installation.
 # Preserve evidence on this early failure path (before the gameplay checks run).
