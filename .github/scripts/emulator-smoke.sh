@@ -86,12 +86,15 @@ size="${screen_width}x${screen_height}"
 adb shell dumpsys window > window_state.txt
 if grep -Eq 'mCurrentFocus=.*ImmersiveModeConfirmation' window_state.txt; then
   echo "Dismissing Android immersive-mode confirmation before PLAY" >&2
-  # The "Got it" button is near 71% width and 46% height in landscape.
-  adb shell input tap "$((screen_width * 71 / 100))" "$((screen_height * 46 / 100))"
+  # Avoid guessing a dialog button's screen coordinates. Android's focused
+  # confirmation button accepts ENTER; retain evidence if it does not.
+  adb shell input keyevent 66
   sleep 2
   adb shell dumpsys window > window_state.txt
   if grep -Eq 'mCurrentFocus=.*ImmersiveModeConfirmation' window_state.txt; then
-    echo "Immersive-mode confirmation still focused after dismissal" >&2
+    echo "Immersive-mode confirmation still focused after ENTER" >&2
+    adb exec-out screencap -p > riftreign-post-tap.png 2>/dev/null || true
+    adb shell dumpsys window > window-post-tap.txt 2>&1 || true
     exit 1
   fi
   adb exec-out screencap -p > riftreign-boot.png
