@@ -35,6 +35,16 @@ jobs:
           fi
       - name: Syntax-check emulator script
         run: bash -n .github/scripts/emulator-smoke.sh
+      - name: Diagnose emulator host acceleration
+        run: |
+          echo "Runner kernel: $(uname -a)"
+          echo "CPU virtualization flags:"
+          grep -m1 -Eo 'vmx|svm' /proc/cpuinfo || true
+          echo "KVM device:"
+          ls -l /dev/kvm || true
+          if [ ! -r /dev/kvm ] || [ ! -w /dev/kvm ]; then
+            echo "::warning::KVM acceleration is unavailable to this runner; Android emulator boot may be extremely slow."
+          fi
       - name: Boot emulator and launch game without live services
         uses: reactivecircus/android-emulator-runner@v2
         with:
