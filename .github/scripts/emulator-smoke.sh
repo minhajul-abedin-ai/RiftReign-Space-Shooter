@@ -61,18 +61,28 @@ fi
 # The PLAY hitbox is defined in RiftReignGameView.menuPlayRect() as
 # x=60%-84%, y=20.5%-28.5% of the full-screen view.
 # Use the center and confirm startGame() emitted its explicit state-transition marker.
-size="$(adb shell wm size | tr -d '\r' | sed -n 's/^Physical size: //p' | head -n1)"
-if [[ ! "$size" =~ ^([0-9]+)x([0-9]+)$ ]]; then
-  echo "Cannot determine emulator display dimensions: $size" >&2
+# wm size reports physical portrait dimensions even after the game rotates to
+# landscape. Read the actual rendered PNG dimensions instead, so adb input tap
+# uses coordinates in the current display orientation.
+physical_size="$(adb shell wm size | tr -d '\r' | sed -n 's/^Physical size: //p' | head -n1)"
+adb exec-out screencap -p > riftreign-boot.png
+expected_png_signature='89504e470d0a1a0a'
+actual_png_signature="$(od -An -tx1 -N8 riftreign-boot.png | tr -d '[:space:]')"
+if [[ "$actual_png_signature" != "$expected_png_signature" ]]; then
+  echo "Pre-tap screenshot is not a PNG" >&2
   exit 1
 fi
-screen_width="${BASH_REMATCH[1]}"
-screen_height="${BASH_REMATCH[2]}"
-# Capture the rendered menu before interaction so failed taps can be diagnosed.
-# These files are included in the existing CI evidence artifact.
-adb exec-out screencap -p > riftreign-boot.png
+# PNG IHDR stores width and height as unsigned big-endian 32-bit integers.
+read -r w1 w2 w3 w4 h1 h2 h3 h4 <<< "$(od -An -tu1 -j16 -N8 riftreign-boot.png)"
+screen_width=$(( (w1 << 24) | (w2 << 16) | (w3 << 8) | w4 ))
+screen_height=$(( (h1 << 24) | (h2 << 16) | (h3 << 8) | h4 ))
+if (( screen_width < 100 || screen_height < 100 )); then
+  echo "Invalid screenshot dimensions: ${screen_width}x${screen_height}" >&2
+  exit 1
+fi
+size="${screen_width}x${screen_height}"
 adb shell dumpsys window > window_state.txt || true
-printf 'Display size: %s\nTap coordinates: %s,%s\n' "$size" "$((screen_width * 72 / 100))" "$((screen_height * 245 / 1000))" > tap-diagnostics.txt
+printf 'Physical size: %s\nRendered size: %s\nTap coordinates: %s,%s\n' "$physical_size" "$size" "$((screen_width * 72 / 100))" "$((screen_height * 245 / 1000))" > tap-diagnostics.txt
 adb shell input tap "$((screen_width * 72 / 100))" "$((screen_height * 245 / 1000))"
 sleep 3
 adb logcat -d -s RiftReignSmoke:I > gameplay-transition.txt
