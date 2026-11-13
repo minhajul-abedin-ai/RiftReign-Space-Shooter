@@ -55,5 +55,8 @@ jobs:
             runtime-errors.txt
             activity_state.txt
             launch-result.txt
+            gameplay-transition.txt
+            tap-diagnostics.txt
+            window_state.txt
             riftreign-boot.png
           if-no-files-found: warn
