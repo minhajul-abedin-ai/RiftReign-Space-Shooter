@@ -99,6 +99,9 @@ fi
 printf 'Physical size: %s\nRendered size: %s\nTap coordinates: %s,%s\n' "$physical_size" "$size" "$((screen_width * 72 / 100))" "$((screen_height * 245 / 1000))" > tap-diagnostics.txt
 adb shell input tap "$((screen_width * 72 / 100))" "$((screen_height * 245 / 1000))"
 sleep 3
+# Capture post-input evidence before assertions so failures retain the actual UI state.
+adb exec-out screencap -p > riftreign-post-tap.png 2>/dev/null || true
+adb shell dumpsys window > window-post-tap.txt 2>&1 || true
 adb logcat -d -s RiftReignSmoke:I > gameplay-transition.txt
 adb logcat -d -s AndroidRuntime:E > runtime-errors.txt
 if ! grep -q 'GAMEPLAY_STARTED' gameplay-transition.txt; then
