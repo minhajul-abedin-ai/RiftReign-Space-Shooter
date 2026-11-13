@@ -80,5 +80,7 @@ jobs:
             gameplay-transition.txt
             tap-diagnostics.txt
             window_state.txt
+            window-post-tap.txt
             riftreign-boot.png
+            riftreign-post-tap.png
           if-no-files-found: warn
