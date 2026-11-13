@@ -81,7 +81,21 @@ if (( screen_width < 100 || screen_height < 100 )); then
   exit 1
 fi
 size="${screen_width}x${screen_height}"
-adb shell dumpsys window > window_state.txt || true
+# Fresh Android emulators may display a system-owned immersive-mode dialog
+# over the game. A PLAY tap cannot reach the game until it is dismissed.
+adb shell dumpsys window > window_state.txt
+if grep -Eq 'mCurrentFocus=.*ImmersiveModeConfirmation' window_state.txt; then
+  echo "Dismissing Android immersive-mode confirmation before PLAY" >&2
+  # The "Got it" button is near 71% width and 46% height in landscape.
+  adb shell input tap "$((screen_width * 71 / 100))" "$((screen_height * 46 / 100))"
+  sleep 2
+  adb shell dumpsys window > window_state.txt
+  if grep -Eq 'mCurrentFocus=.*ImmersiveModeConfirmation' window_state.txt; then
+    echo "Immersive-mode confirmation still focused after dismissal" >&2
+    exit 1
+  fi
+  adb exec-out screencap -p > riftreign-boot.png
+fi
 printf 'Physical size: %s\nRendered size: %s\nTap coordinates: %s,%s\n' "$physical_size" "$size" "$((screen_width * 72 / 100))" "$((screen_height * 245 / 1000))" > tap-diagnostics.txt
 adb shell input tap "$((screen_width * 72 / 100))" "$((screen_height * 245 / 1000))"
 sleep 3
