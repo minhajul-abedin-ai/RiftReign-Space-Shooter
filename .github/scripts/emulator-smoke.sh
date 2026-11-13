@@ -34,9 +34,20 @@ if ! adb install -r "$APK"; then
   adb install -r "$APK"
 fi
 adb logcat -c
-adb shell am start -W -n com.minhajul.riftreign/.MainActivity | tee launch-result.txt
+# Hosted emulators sometimes report a launch timeout even after APK installation.
+# Preserve evidence on this early failure path (before the gameplay checks run).
+if ! adb shell am start -W -n com.minhajul.riftreign/.MainActivity | tee launch-result.txt; then
+  echo "adb activity launch command failed" >&2
+  adb shell dumpsys activity activities > activity_state.txt 2>&1 || true
+  adb logcat -d -s AndroidRuntime:E > runtime-errors.txt 2>&1 || true
+  adb exec-out screencap -p > riftreign-boot.png 2>/dev/null || true
+  exit 1
+fi
 if ! grep -q '^Status: ok' launch-result.txt; then
-  echo "Android did not report a successful activity launch" >&2
+  echo "Android did not report a successful activity launch; retaining activity, crash and screen diagnostics" >&2
+  adb shell dumpsys activity activities > activity_state.txt 2>&1 || true
+  adb logcat -d -s AndroidRuntime:E > runtime-errors.txt 2>&1 || true
+  adb exec-out screencap -p > riftreign-boot.png 2>/dev/null || true
   exit 1
 fi
 sleep 15
