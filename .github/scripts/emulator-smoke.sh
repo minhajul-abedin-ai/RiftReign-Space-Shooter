@@ -38,7 +38,7 @@ fi
 # launching the app, rather than attempting unreliable taps/key events later.
 # Read back the value to surface unsupported or denied settings writes.
 adb shell settings put secure immersive_mode_confirmations confirmed
-immersive_confirmation_setting="$(adb shell settings get secure immersive_mode_confirmations | tr -d '\\r')"
+immersive_confirmation_setting="$(adb shell settings get secure immersive_mode_confirmations | tr -d '\r')"
 if [[ "$immersive_confirmation_setting" != "confirmed" ]]; then
   echo "Could not acknowledge immersive-mode confirmation: $immersive_confirmation_setting" >&2
   exit 1
