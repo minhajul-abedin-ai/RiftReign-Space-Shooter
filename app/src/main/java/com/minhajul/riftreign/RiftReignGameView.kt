@@ -2167,6 +2167,7 @@ class RiftReignGameView(
     private fun startGame() {
         world.setDifficulty(selectedDifficulty)
         world.startNewGame(selectedDifficulty)
+        Log.i("RiftReignSmoke", "GAMEPLAY_STARTED")
         newBestThisRun = false
         menuPage = MenuPage.HOME
         pausePage = PausePage.MAIN
